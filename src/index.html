@@ -1,0 +1,186 @@
+<html>
+	<head>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+		<link  href="main.css" rel="stylesheet">
+
+		<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+		<link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+  		<script src="https://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+		
+		<link  href="https://cdn.rawgit.com/fengyuanchen/cropper/v2.0.0/dist/cropper.min.css" rel="stylesheet">
+		<script src="https://cdn.rawgit.com/fengyuanchen/cropper/v2.0.0/dist/cropper.min.js"></script>
+		
+		<link href="./css/fileinput.min.css" media="all" rel="stylesheet" type="text/css" />
+		<script src="./js/fileinput.min.js"></script>
+		
+		<script src="./js/countries.js"></script>
+
+		<script type="text/javascript" src="http://vk.com/js/api/share.js?90" charset="windows-1251"></script>
+
+		<script type="text/javascript">
+
+			var countryId = 70;
+
+			var overlay = function() { 
+				var flagImg  = new Image();
+				flagImg.crossOrigin="Anonymous";
+				flagImg.src = countries[countryId].flag;
+
+				$(flagImg).load(function() {
+				$("div.preview-lg").html('<canvas id="img-preview-lg" width="179" height="179" style="width: 179px; height: 179px;"/>');
+				canvas = $('#img-preview-lg');
+				ctx = canvas[0].getContext("2d");
+
+				ctx.globalAlpha = 1;
+				ctx.drawImage($("#avatar").cropper('getCroppedCanvas'), 0, 0, canvas[0].width, canvas[0].height);
+				ctx.globalAlpha = 0.3;
+				ctx.drawImage(flagImg, 0 , 0, canvas[0].width, canvas[0].height);
+				ctx.save();
+				});
+
+			}
+
+
+
+			var cropper = function() {
+				$('#avatar').cropper({
+					aspectRatio: 1,
+					viewMode: 0,
+	  					built: function () {
+  							$(this).cropper("setCropBoxData", {"left": 208, "top": 30, "width": 457, "height": 457});
+	    					overlay();
+    				},
+					cropend: function () {
+						overlay()
+					}				
+				});
+			}
+
+			var changeImage = function(url) {
+				$('#avatar').cropper('replace', url);
+				overlay();
+			}
+
+			var saveImage = function() {
+				var canvas = $('#img-preview-lg')[0];
+				var d= canvas.toDataURL("image/png");
+				$("#btn-download").attr("href", d);
+			};
+
+			$(document).ready(function(){
+				cropper();
+
+				$(".selectable").selectable({
+					 selected: function( event, ui ) {
+					 	countryId = ui.selected.id;
+					 	overlay();
+					 }
+				 });
+
+				$("#file-source-input").on('fileloaded', function(event, file, previewId, index, reader) {
+				   var url = (window.URL) ? window.URL.createObjectURL(file) : window.webkitURL.createObjectURL(file);
+				   changeImage(url);
+				});
+
+				for (var i = 0; i < countries.length; i++) {
+					var country = $('<li id="' + i + '"> <img class="country-flag" crossOrigin="Anonymous" src="' + countries[i].flag + '" /> <span>' + countries[i].name + '</span></li>');
+					$("#country").append(country);
+				}
+
+
+				$("li#70").attr('class', 'ui-selectee ui-selected')
+			});
+		</script>
+	</head>
+	<body>
+	<div class="jumbotron docs-jumbotron">
+    <div class="container">
+      <h1>Compassion <small class="version">v0.0.1</small></h1>
+      <p class="lead">Now it is easy to compassionate to any country in the world.</p>
+      <div class="lead social">
+					<div class="button tw-button">
+						<a href="https://twitter.com/share" class="twitter-share-button" data-text="Compassion is easy">Tweet</a>
+						<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+					</div>
+					<div class="button vk-button">
+						<script type="text/javascript">
+						<!--
+						document.write(VK.Share.button());
+
+						-->
+						</script>
+
+					</div>
+					<div class="button vk-button">
+					    <!-- Load Facebook SDK for JavaScript -->
+					    <div id="fb-root"></div>
+					    <script>
+					    (function(d, s, id) {
+					      var js, fjs = d.getElementsByTagName(s)[0];
+					      if (d.getElementById(id)) return;
+					      js = d.createElement(s); js.id = id;
+					      js.src = "https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.2";
+					      fjs.parentNode.insertBefore(js, fjs);
+					    }(document, 'script', 'facebook-jssdk'));
+					    </script>
+
+					    <!-- Your share button code -->
+					    <div class="fb-share-button" 
+					        data-href="http://compassion.develab.me/index.html" 
+					        data-layout="button_count">
+					    </div>					
+					</div>
+      </div>
+    </div>
+  </div>
+
+	<div class="container">
+		<div class="row">
+			<div class="col-md-9">
+				<div class="img-container">
+					<img id="avatar" class="image-source" src="./index.jpg" />
+				</div>
+			</div>
+			<div class="col-md-3">
+				<div style="position: fixed;">
+					<div class="img-preview preview-lg">
+					</div>
+
+					<div class="button">
+						<a href="#" class="btn btn-primary" id="btn-download" onclick="saveImage()" download="my-file-name.png"><i class="glyphicon glyphicon-download"></i>Download</a>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-9 settings">
+				<div class="input-group">
+					<input type="text" class="form-control" name="img-source-input" id="img-source-input" placeholder="Input image url here" />
+					<span class="input-group-btn">
+				        <button class="btn btn-primary" type="button" onclick="changeImage($('#img-source-input').val())" style="width: 108px;"><i class="glyphicon glyphicon-picture"></i>Load...</button>
+			        </span>
+				</div>
+				or select file from your local computer
+				<input id="file-source-input" name="file-source-input" type="file" class="file" data-show-upload="false" data-show-preview="false"/>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-9 settings">
+				<ul class="selectable" name="country" id="country" >
+				</ul>
+			</div>
+		</div>
+	</div>
+
+	<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-55278147-3', 'auto');
+  ga('send', 'pageview');
+
+</script>
+	</body>
+</html>

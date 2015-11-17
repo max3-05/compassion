@@ -1,0 +1,41 @@
+.img-container, .settings {
+	margin-bottom: 20px;
+}
+
+.img-preview {
+    margin-right: 10px;
+    margin-bottom: 10px;
+    overflow: hidden;
+}
+
+.preview-lg {
+	width: 179px;
+	height: 179px;
+}
+
+.preview-md {
+	width: 90px;
+	height: 90px;
+}
+
+.settings > .btn, .docs-buttons > .btn-group, .docs-buttons > .form-control {
+    margin-right: 5px;
+    margin-bottom: 10px;
+}
+
+
+#country .ui-selecting { background: #FECA40; }
+#country .ui-selected { background: #F39814; color: white; }
+#country { list-style-type: none; margin: 0; padding: 0; width: 100%; }
+#country li { padding: 0.4em; font-size: 1.4em; display: block; float: left; overflow: hidden; width: 20%;	text-align: center; height: 185px;}
+#country .country-flag {
+	display: block;
+	width: 100%;
+	border: 1px solid black;
+}
+
+.social > div {
+	float: left;
+	padding-right: 15px;
+	vertical-align: text-bottom;
+}
